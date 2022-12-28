@@ -101,6 +101,7 @@ public class Gototrains extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jLabel6 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -195,8 +196,18 @@ public class Gototrains extends javax.swing.JFrame {
         });
 
         jButton2.setText("EDIT");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("DELETE");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -209,10 +220,22 @@ public class Gototrains extends javax.swing.JFrame {
                 "Train No", "Train Name", "Start ", "Destination", "Price"
             }
         ));
+        jTable2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable2MouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTable2);
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel6.setText("TRAINS");
+
+        jButton4.setText("RESET");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -233,7 +256,9 @@ public class Gototrains extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34)
+                        .addComponent(jButton4))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(54, 54, 54)
                         .addComponent(jLabel6)))
@@ -253,7 +278,8 @@ public class Gototrains extends javax.swing.JFrame {
                     .addComponent(addtrain)
                     .addComponent(jButton2)
                     .addComponent(jLabel1)
-                    .addComponent(jButton3))
+                    .addComponent(jButton3)
+                    .addComponent(jButton4))
                 .addContainerGap(51, Short.MAX_VALUE))
         );
 
@@ -289,6 +315,7 @@ public class Gototrains extends javax.swing.JFrame {
         tdplace.setText("");
         tprice.setText("");
         txttrainno.requestFocus();
+        Train_Details();
         }catch(SQLException ex){
          //LogManager.getLogger(Gototrains.class.getName()).log(Level.SEVERE,null,ex);   
                // System.err.println(ex);   
@@ -300,6 +327,94 @@ public class Gototrains extends javax.swing.JFrame {
     private void tpriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tpriceActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tpriceActionPerformed
+
+    private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
+        // TODO add your handling code here:
+          DefaultTableModel d=(DefaultTableModel)jTable2.getModel();
+          int selectIndex=jTable2.getSelectedRow();
+          txttrainno.setText(d.getValueAt(selectIndex,0).toString());
+          txtname.setText(d.getValueAt(selectIndex,1).toString());
+          tstartplace.setText(d.getValueAt(selectIndex,2).toString());
+          tdplace.setText(d.getValueAt(selectIndex,3).toString());
+          tprice.setText(d.getValueAt(selectIndex,4).toString());
+          addtrain.setEnabled(false);
+    }//GEN-LAST:event_jTable2MouseClicked
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+            String tno = txttrainno.getText();
+        String tname = txtname.getText();
+        String start = tstartplace.getText();
+        String end = tdplace.getText();
+        String price = tprice.getText();
+        try{
+        ps =Con.prepareStatement("update traindetails set tname=?,start=?,end=?,price=? where tno = ?");
+        ps.setString(1,tname);
+        ps.setString(2,start);
+        ps.setString(3,end);
+        ps.setString(4,price);
+        ps.setString(5,tno);
+        int k=ps.executeUpdate();
+        if(k==1)
+        {
+            JOptionPane.showMessageDialog(this,"Record UPDATED");
+        }
+        else{
+            JOptionPane.showMessageDialog(this,"Record Failed");
+        }
+        txttrainno.setText("");
+        txtname.setText("");
+        tstartplace.setText("");
+        tdplace.setText("");
+        tprice.setText("");
+        txttrainno.requestFocus();
+        Train_Details();
+        addtrain.setEnabled(true);
+        }catch(SQLException ex){
+         //LogManager.getLogger(Gototrains.class.getName()).log(Level.SEVERE,null,ex);   
+               // System.err.println(ex);   
+               java.util.logging.Logger.getLogger(Gototrains.class.getName()).log(Level.SEVERE, null, ex);
+
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+                   String tno = txttrainno.getText();
+        
+        try{
+        ps =Con.prepareStatement("delete from traindetails where tno = ?");
+        ps.setString(1,tno);
+        
+        int k=ps.executeUpdate();
+        if(k==1)
+        {
+            JOptionPane.showMessageDialog(this,"Record DELETED");
+        }
+        else{
+            JOptionPane.showMessageDialog(this,"Record Failed");
+        }
+        txttrainno.setText("");
+        txtname.setText("");
+        tstartplace.setText("");
+        tdplace.setText("");
+        tprice.setText("");
+        txttrainno.requestFocus();
+        Train_Details();
+        addtrain.setEnabled(true);
+        }catch(SQLException ex){
+         //LogManager.getLogger(Gototrains.class.getName()).log(Level.SEVERE,null,ex);   
+               // System.err.println(ex);   
+               java.util.logging.Logger.getLogger(Gototrains.class.getName()).log(Level.SEVERE, null, ex);
+
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        Train_Details();
+        jButton2.setEnabled(true);
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -341,6 +456,7 @@ public class Gototrains extends javax.swing.JFrame {
     private javax.swing.JButton addtrain;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
